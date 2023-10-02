@@ -8,6 +8,7 @@ import com.txia.personalBlog.payload.CommentDto;
 import com.txia.personalBlog.repository.CommentRepository;
 import com.txia.personalBlog.repository.PostRepository;
 import com.txia.personalBlog.service.CommentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class CommentServiceImpl implements CommentService {
 
     private CommentRepository commentRepository;
     private PostRepository postRepository;
+    private ModelMapper mapper;
 
 
     public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository) {
@@ -92,21 +94,11 @@ public class CommentServiceImpl implements CommentService {
 
     private CommentDto mapToDTO(Comment comment)
     {
-        CommentDto commentDto = new CommentDto();
-        commentDto.setId(comment.getId());
-        commentDto.setName(comment.getName());
-        commentDto.setEmail(comment.getEmail());
-        commentDto.setBody(comment.getBody());
-        return commentDto;
+        return mapper.map(comment, CommentDto.class);
     }
 
     private Comment mapToEntity(CommentDto commentDto)
     {
-        Comment comment = new Comment();
-        comment.setId(commentDto.getId());
-        comment.setName(commentDto.getName());
-        comment.setEmail(commentDto.getEmail());
-        comment.setBody(commentDto.getBody());
-        return comment;
+        return mapper.map(commentDto, Comment.class);
     }
 }
