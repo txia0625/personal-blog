@@ -7,6 +7,7 @@ import com.txia.personalBlog.payload.LoginDto;
 import com.txia.personalBlog.payload.RegisterDto;
 import com.txia.personalBlog.repository.RoleRepository;
 import com.txia.personalBlog.repository.UserRepository;
+import com.txia.personalBlog.security.JwtTokenProvider;
 import com.txia.personalBlog.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,13 +27,17 @@ public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private JwtTokenProvider jwtTokenProvider;
 
-    public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
+
+
 
     @Override
     public String login(LoginDto loginDto) {
@@ -40,7 +45,8 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsernameOrEmail(), loginDto.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return "Logged in Successfully";
+        String token = jwtTokenProvider.generateToken(authentication);
+        return token;
     }
 
     @Override

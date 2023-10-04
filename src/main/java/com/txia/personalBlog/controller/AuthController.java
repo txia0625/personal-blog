@@ -1,5 +1,6 @@
 package com.txia.personalBlog.controller;
 
+import com.txia.personalBlog.payload.JWTAuthResponse;
 import com.txia.personalBlog.payload.LoginDto;
 import com.txia.personalBlog.payload.RegisterDto;
 import com.txia.personalBlog.service.AuthService;
@@ -21,10 +22,12 @@ public class AuthController {
 
 
     @PostMapping({"/login", "/signin"})
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto)
+    public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginDto loginDto)
     {
-        String res = authService.login(loginDto);
-        return ResponseEntity.ok(res);
+        String token = authService.login(loginDto);
+        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
     @PostMapping(value = {"/register", "/signup"})
